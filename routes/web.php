@@ -15,6 +15,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['prefix' => 'admin'], function () {
+Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('todolist/create', 'Admin\TasksController@add');
+    Route::post('todolist/create','Admin\TasksController@create');
 });
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
