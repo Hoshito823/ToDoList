@@ -19,6 +19,7 @@ class CreateTasksTable extends Migration
             $table->string('detail');
             $table->integer('complete')->default(0);
             $table->string('image_path')->nullable();
+            $table->string('deadline');
             $table->timestamps();
         });
     }

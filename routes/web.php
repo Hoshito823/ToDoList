@@ -18,8 +18,14 @@ Route::get('/', function () {
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('todolist/create', 'Admin\TasksController@add');
     Route::post('todolist/create','Admin\TasksController@create');
+    Route::get('todolist','Admin\TasksController@index');
+    Route::get('todolist/edit','Admin\TasksController@edit');
+    Route::post('todolist/edit', 'Admin\TasksController@update');
+    Route::get('todolist/delete','Admin\TasksController@delete');
+    Route::get('todolist/mytasks', 'Admin\UsersController@display_mytasks');
 });
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+

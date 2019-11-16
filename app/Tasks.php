@@ -14,4 +14,5 @@ class Tasks extends Model
       'title' => 'required',
       'detail'=> 'required',
     );
+    
 }
