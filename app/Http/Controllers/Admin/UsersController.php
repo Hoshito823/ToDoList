@@ -17,21 +17,5 @@ class UsersController extends Controller
         return('admin.users.create'); 
     }
     
-    public function display_mytasks(Request $request) {
-        //ユーザー情報を取得
-        $user = Auth::user();
-    
-        //現在のユーザーIDに紐づいたTaskを返す
-        $tasks = Tasks::where('user_id',$user->id)->get();
-    
-        // //ユーザーに紐づくタスク情報を全取得
-        // $tasks = $users->tasks();
-    
-        // //やたらいろんな情報が取れている
-        // dd($tasks);
-        
-        return view('tasks.mytasks', ['tasks' => $tasks]);
-    }
-    
     
 }

@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 
-@section('title','ToDolist')
+@section('title','DoneMyTasks')
 
 @section('content')
     <div class="container">
         <div class="row">
-            <h2>ToDolist</h2>
+            <h2>DoneMyTasks</h2>
         </div>
         
         <div class="row">
@@ -14,10 +14,9 @@
                     Add New Task
                 </a>
             </div>
-            
             <div class="col-md-2">
-                <a href="{{ action('Admin\TasksController@display_mytasks') }}" role="button" class="btn btn-primary">
-                    Display My Task
+                <a href="{{ action('Admin\TasksController@display_mytasks') }}" role="button" class="btn btn-light">
+                    Back To Mytasks
                 </a>
             </div>
             
@@ -54,7 +53,7 @@
                         </thead>
                         
                         <tbody>
-                            @foreach($tasks as $task)
+                            @foreach($donetasks as $task)
                                 <tr>
                                     <th>{{ $task->id }}</th>
                                     <!--<th>{{ $loop->iteration }}</th>-->
@@ -62,12 +61,7 @@
                                     <td>{{ \Str::limit($task->detail, 250) }}</td>
                                     <td>
                                         <div>
-                                            <a href="{{ action('Admin\TasksController@edit', ['id' => $task->id]) }}" class="btn btn-primary">Edit</a>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div>
-                                            <a href="{{ action('Admin\TasksController@delete', ['id' => $task->id]) }}" class="btn btn-primary">Delete</a>
+                                            <a href="{{ action('Admin\TasksController@delete', ['id' => $task->id]) }}" class="btn btn-secondary">Delete</a>
                                         </div>
                                     </td>
                                 </tr>

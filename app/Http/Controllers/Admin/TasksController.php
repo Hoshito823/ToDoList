@@ -114,6 +114,33 @@ class TasksController extends Controller
         return redirect('admin/todolist');
     }
     
+    public function complete(Request $request){
+        $task = Tasks::find($request->id);
+        $task->complete = 1;
+        $task->save();
+        return redirect('admin/todolist/mytasks');
+    }
+    
+    public function display_mytasks(Request $request) {
+        //ユーザー情報を取得
+        $user = Auth::user();
+    
+        //現在のユーザーIDに紐づいたTaskを返す。かつ未完了（comoplete=0)のもの
+        $tasks = Tasks::where('user_id',$user->id)->where('complete', 0)->get();
+
+        return view('tasks.mytasks', ['tasks' => $tasks]);
+    }
+    
+    public function display_done_mytasks(Request $request) {
+        
+        $user = Auth::user();
+        
+        //現在のユーザーIDに紐づいたTaskを返す。かつ完了済み（comoplete=１)のもの
+        $tasks = Tasks::where('user_id',$user->id)->where('complete', 1)->get();
+        
+        return view('tasks.donemytasks', ['donetasks' => $tasks]);
+    }
+    
     
     
     

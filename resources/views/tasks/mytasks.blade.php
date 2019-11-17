@@ -9,9 +9,14 @@
         </div>
         
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-2">
                 <a href="{{ action('Admin\TasksController@add') }}" role="button" class="btn btn-primary">
                     Add New Task
+                </a>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ action('Admin\TasksController@display_done_mytasks') }}" role="button" class="btn btn-light">
+                    Display Done Tasks
                 </a>
             </div>
             
@@ -50,17 +55,23 @@
                         <tbody>
                             @foreach($tasks as $task)
                                 <tr>
-                                    <th>{{ $loop->iteration }}</th>
+                                    <th>{{ $task->id }}</th>
+                                    <!--<th>{{ $loop->iteration }}</th>-->
                                     <td>{{ \Str::limit($task->title, 100) }}</td>
                                     <td>{{ \Str::limit($task->detail, 250) }}</td>
                                     <td>
                                         <div>
-                                            <a href="{{ action('Admin\TasksController@edit', ['id' => $task->id]) }}" class="btn btn-primary">Edit</a>
+                                            <a href="{{ action('Admin\TasksController@complete', ['id' => $task->id]) }}" class="btn btn-primary">Complete</a>
                                         </div>
                                     </td>
                                     <td>
                                         <div>
-                                            <a href="{{ action('Admin\TasksController@delete', ['id' => $task->id]) }}" class="btn btn-primary">Delete</a>
+                                            <a href="{{ action('Admin\TasksController@edit', ['id' => $task->id]) }}" class="btn btn-light">Edit</a>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <a href="{{ action('Admin\TasksController@delete', ['id' => $task->id]) }}" class="btn btn-secondary">Delete</a>
                                         </div>
                                     </td>
                                 </tr>
