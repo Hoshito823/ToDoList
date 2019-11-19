@@ -49,7 +49,8 @@
                             <tr>
                                 <th width=10%>ID</th>
                                 <th width=20%>Title</th>
-                                <th width=70%>Detail</th>
+                                <th width=60%>Detail</th>
+                                <th width="10%">Deadline</th>
                             </tr>
                         </thead>
                         
@@ -60,6 +61,7 @@
                                     <!--<th>{{ $loop->iteration }}</th>-->
                                     <td>{{ \Str::limit($task->title, 100) }}</td>
                                     <td>{{ \Str::limit($task->detail, 250) }}</td>
+                                    <td>{{ $task->deadline }}</td>
                                     <td>
                                         <div>
                                             <a href="{{ action('Admin\TasksController@edit', ['id' => $task->id]) }}" class="btn btn-primary">Edit</a>
