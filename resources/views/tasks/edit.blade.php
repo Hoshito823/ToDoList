@@ -18,6 +18,13 @@
                 @endif
                 
                 <div class="form-group row">
+                    <label class="col-md-2">Deadline</label>
+                    <div class="col-md-10">
+                        <input type="date" class="form-control" name="deadline" value="<?php echo date('Y-m-d'); ?>">
+                    </div>
+                </div> 
+                
+                <div class="form-group row">
                     <label class="col-md-2" for="title">Title</label>
                     <div class="col-md-10">
                         <input type="text" class="form-control" name="title" value="{{ $task->title }}">

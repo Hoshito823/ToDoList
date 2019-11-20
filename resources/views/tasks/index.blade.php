@@ -56,7 +56,11 @@
                         
                         <tbody>
                             @foreach($tasks as $task)
-                                <tr>
+                             @if($task->deadline <> "" && isset($task['deadline']) && $nowTime > $task->deadline)
+                                <tr class="bg-danger">
+                             @else
+                                 <tr>
+                             @endif
                                     <th>{{ $task->id }}</th>
                                     <!--<th>{{ $loop->iteration }}</th>-->
                                     <td>{{ \Str::limit($task->title, 100) }}</td>

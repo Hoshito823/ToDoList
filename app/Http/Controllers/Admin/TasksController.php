@@ -11,6 +11,9 @@ use App\Http\Controllers\Controller;
 
 use App\Tasks;
 
+//日付操作ライブラリ使用
+use Carbon\Carbon;
+
 class TasksController extends Controller
 {
     //Return task add page
@@ -67,7 +70,11 @@ class TasksController extends Controller
             $tasks = Tasks::all();
         }
         
-        return view('tasks.index',['tasks' => $tasks, 'cond_title' => $cond_title]);
+        //get now time
+        $nowTime = Carbon::now();
+        $nowTime = $nowTime->format('Y-m-d');
+        
+        return view('tasks.index',['tasks' => $tasks, 'cond_title' => $cond_title, 'nowTime' => $nowTime]);
     }
     
     //Edit exiting task
