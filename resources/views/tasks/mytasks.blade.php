@@ -15,8 +15,8 @@
                 </a>
             </div>
             <div class="col-md-2">
-                <a href="{{ action('Admin\TasksController@display_done_mytasks') }}" role="button" class="btn btn-light">
-                    Display Done Tasks
+                <a href="{{ action('Admin\TasksController@index') }}" role="button" class="btn btn-light">
+                    Display All Tasks
                 </a>
             </div>
             
@@ -55,7 +55,11 @@
                         
                         <tbody>
                             @foreach($tasks as $task)
-                                <tr>
+                                @if(isset($task['deadline']) && $task->deadline <> "" && $nowTime > $task->deadline )
+                                    <tr class="bg-danger">
+                                @else
+                                    <tr>
+                                @endif
                                     <th>{{ $task->id }}</th>
                                     <!--<th>{{ $loop->iteration }}</th>-->
                                     <td>{{ \Str::limit($task->title, 100) }}</td>
@@ -82,6 +86,15 @@
                         
                     </table>
                 </div>
+            </div>
+        </div>
+        
+        <!--これ右寄せにするにはどうすればいいのか？-->
+        <div class="row">
+            <div class="col-md-2">
+                <a href="{{ action('Admin\TasksController@display_done_mytasks') }}" role="button" class="btn btn-light">
+                    Display Done Tasks
+                </a>
             </div>
         </div>
         

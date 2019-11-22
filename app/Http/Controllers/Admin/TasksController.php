@@ -134,9 +134,13 @@ class TasksController extends Controller
     
         //現在のユーザーIDに紐づいたTaskを返す。かつ未完了（comoplete=0)のもの
         $tasks = Tasks::where('user_id',$user->id)->where('complete', 0)->get();
+        
+        $nowTime = Carbon::now();
+        $nowTime = $nowTime->format('Y-m-d');
 
-        return view('tasks.mytasks', ['tasks' => $tasks]);
+        return view('tasks.mytasks', ['tasks' => $tasks, 'nowTime' => $nowTime]);
     }
+    
     
     public function display_done_mytasks(Request $request) {
         

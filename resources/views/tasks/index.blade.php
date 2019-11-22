@@ -15,7 +15,7 @@
                 </a>
             </div>
             
-            <div class="col-md-2">
+            <div class="col-md-2 ">
                 <a href="{{ action('Admin\TasksController@display_mytasks') }}" role="button" class="btn btn-primary">
                     Display My Task
                 </a>
