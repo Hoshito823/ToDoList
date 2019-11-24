@@ -124,6 +124,7 @@ class TasksController extends Controller
     public function complete(Request $request){
         $task = Tasks::find($request->id);
         $task->complete = 1;
+        $task->priority = Null;
         $task->save();
         return redirect('admin/todolist/mytasks');
     }
@@ -132,13 +133,38 @@ class TasksController extends Controller
         //ユーザー情報を取得
         $user = Auth::user();
     
-        //現在のユーザーIDに紐づいたTaskを返す。かつ未完了（comoplete=0)のもの
-        $tasks = Tasks::where('user_id',$user->id)->where('complete', 0)->get();
+        //現在ログインしているユーザーのタスク、未完了、優先度が設定されている、優先度順位に照準ソート
+        $tasks = Tasks::where('user_id',$user->id)->where('complete', 0)->WhereNotNull('priority')->orderBy('priority', 'asc')->get();
+        
+        //現在ログインしているユーザーのタスク、未完了、優先度が設定されていないタスクを取得
+        $priority_undefinded_Tasks = Tasks::where('user_id',$user->id)->where('complete',0)->whereNull('priority')->get();
+        
+        
+        //【実験】別々に取得したデータを結合して$tasksに代入する
+        $tasks = $tasks->concat($priority_undefinded_Tasks);
+        
+        
+        // $conditions = [
+        //     'user_id' => $user->id,
+        //     'complete' => 0
+        // ];    
+        
+        // $tasks = Tasks::where(function ($query) use ($conditions) {
+        //     foreach ($conditions as $key => $value) {
+        //         $query->where($key, $value);
+        //     }
+        // })
+        // ->get();
+        
         
         $nowTime = Carbon::now();
         $nowTime = $nowTime->format('Y-m-d');
-
+        
+        //結合済みの$tasksを返す場合
         return view('tasks.mytasks', ['tasks' => $tasks, 'nowTime' => $nowTime]);
+        
+        //結合していない優先順位を持つtasks、持たないtasksを別々に持つ場合
+        // return view('tasks.mytasks', ['tasks' => $tasks, 'nowTime' => $nowTime, 'priority_undefinded_Tasks' => $priority_undefinded_Tasks]);
     }
     
     
@@ -146,13 +172,30 @@ class TasksController extends Controller
         
         $user = Auth::user();
         
-        //現在のユーザーIDに紐づいたTaskを返す。かつ完了済み（comoplete=１)のもの
+        //現在のユーザーIDに紐づいたTaskを返す。かつ完了済み（complete=１)のもの
         $tasks = Tasks::where('user_id',$user->id)->where('complete', 1)->get();
         
         return view('tasks.donemytasks', ['donetasks' => $tasks]);
     }
     
     
+    // public function add_priority(Request $request){
+    //     $user = Auth::user();
+    //     $task = Tasks::where('user_id', $user->id)->where('complete',0)->get();
+        
+    //     //優先度設定
+    //     $task->priority = $request->priority;
+    //     $task->save();
+        
+    //     //現在時刻取得
+    //     $nowTime = Carbon::now();
+        
+    //     //タスク内容全取得
+    //     $tasks = Tasks::where('user_id', $user->id)->where('complete', 0)->get();
+        
+    //     return view('tasks.mytasks', ['tasks' => $tasks, 'nowTime' => $nowTime]);
+        
+    // }
     
     
 }

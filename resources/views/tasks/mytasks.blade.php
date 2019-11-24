@@ -46,7 +46,7 @@
                     <table class="table table-dark">
                         <thead>
                             <tr>
-                                <th width=10%>ID</th>
+                                <th width=10%>Priority</th>
                                 <th width=20%>Title</th>
                                 <th width=60%>Detail</th>
                                 <th width=10%>Deadline</th>
@@ -60,7 +60,7 @@
                                 @else
                                     <tr>
                                 @endif
-                                    <th>{{ $task->id }}</th>
+                                    <th>{{ $task->priority }}</th>
                                     <!--<th>{{ $loop->iteration }}</th>-->
                                     <td>{{ \Str::limit($task->title, 100) }}</td>
                                     <td>{{ \Str::limit($task->detail, 250) }}</td>
@@ -82,6 +82,7 @@
                                     </td>
                                 </tr>
                             @endforeach
+                            
                         </tbody>
                         
                     </table>

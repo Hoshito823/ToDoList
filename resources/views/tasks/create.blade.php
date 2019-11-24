@@ -17,6 +17,20 @@
                         </ul>
                     @endif
                     
+                    <!--SetTasksFunction-->
+                    <div class="form-group row">
+                        <label class="col-md-2">Priority</label>
+                        <div class="col-md-10">
+                            <select size=1 name="priority">
+                                @for ($i = 0; $i < 5; $i++)
+                                <option value="{{ $i + 1 }}">{{ $i + 1 }}</option>
+                                @endfor
+                                <option value="">Null</option>
+                            </select>
+                            * Priority Level(1：Highest ~ 5：Lowest)
+                        </div>
+                    </div>
+                    
                     <div class="form-group row">
                         <label class="col-md-2">Dead Line</label>
                         <div class="col-md-10">

@@ -22,6 +22,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('todolist/edit','Admin\TasksController@edit');
     Route::post('todolist/edit', 'Admin\TasksController@update');
     Route::get('todolist/delete','Admin\TasksController@delete');
+    Route::post('todolist/add_priority', 'Admin\TasksController@add_priority');
     Route::get('todolist/complete', 'Admin\TasksController@complete');
     Route::get('todolist/mytasks', 'Admin\TasksController@display_mytasks');
     Route::get('todolist/donemytasks', 'Admin\TasksController@display_done_mytasks');
