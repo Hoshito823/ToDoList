@@ -15,4 +15,14 @@ class Tasks extends Model
       'detail'=> 'required',
     );
     
+    public function category()
+    {
+      return $this->hasOne('App\Category');
+    }
+    
+    public function getTasksByCategory(){
+      //
+    }
+    
+    
 }

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 
 use App\Tasks;
+use App\Category;
 
 //日付操作ライブラリ使用
 use Carbon\Carbon;
@@ -18,13 +19,13 @@ class TasksController extends Controller
 {
     //Return task add page
     public function add () {
-        return view('tasks.create');
+        $categories = Category::get();
+        return view('tasks.create',['categories' => $categories]);
     }
     
     
     //Create New Task
     public function create (Request $request) {
-    
         //Taskモデルの$rulesを使ってフォームから送信されてきたデータのバリデーションを行う
         $this->validate($request, Tasks::$rules);
         
@@ -52,7 +53,7 @@ class TasksController extends Controller
         $task->fill($form);
         $task->save();
         
-        return redirect('admin/todolist');
+        return redirect('todolist');
     } 
     
     
@@ -74,7 +75,8 @@ class TasksController extends Controller
         $nowTime = Carbon::now();
         $nowTime = $nowTime->format('Y-m-d');
         
-        return view('tasks.index',['tasks' => $tasks, 'cond_title' => $cond_title, 'nowTime' => $nowTime]);
+        return view('tasks.index', compact('tasks', 'cond_title', 'nowTime'));
+        // return view('tasks.index',['tasks' => $tasks, 'cond_title' => $cond_title, 'nowTime' => $nowTime]);
     }
     
     //Edit exiting task
@@ -111,14 +113,14 @@ class TasksController extends Controller
         
         $task->fill($task_form)->save();
         
-        return redirect('admin/todolist');
+        return redirect('todolist');
         
     }
     
     public function delete(Request $request){
         $task = Tasks::find($request->id);
         $task->delete();
-        return redirect('admin/todolist');
+        return redirect('todolist');
     }
     
     public function complete(Request $request){
@@ -126,22 +128,62 @@ class TasksController extends Controller
         $task->complete = 1;
         $task->priority = Null;
         $task->save();
-        return redirect('admin/todolist/mytasks');
+        return redirect('todolist/mytasks');
     }
     
     public function display_mytasks(Request $request) {
         //ユーザー情報を取得
         $user = Auth::user();
-    
-        //現在ログインしているユーザーのタスク、未完了、優先度が設定されている、優先度順位に照準ソート
-        $tasks = Tasks::where('user_id',$user->id)->where('complete', 0)->WhereNotNull('priority')->orderBy('priority', 'asc')->get();
         
-        //現在ログインしているユーザーのタスク、未完了、優先度が設定されていないタスクを取得
-        $priority_undefinded_Tasks = Tasks::where('user_id',$user->id)->where('complete',0)->whereNull('priority')->get();
+        //カテゴリ情報を取得
+        $categories = Category::get();
         
+        //カテゴリが指定されたら、そのカテゴリだけのタスクを見つける
+        $category_key = $request->category_key;
         
-        //【実験】別々に取得したデータを結合して$tasksに代入する
+        if ($category_key != '') {
+            //現在ログインしているユーザーのタスク、未完了、優先度が設定されている、優先度順位に照準ソート
+            $tasks = Tasks::where('user_id',$user->id)
+                    ->where('complete', 0)
+                    ->WhereNotNull('priority')
+                    ->where('category_id', $category_key)
+                    ->orderBy('priority', 'asc')
+                    ->get();
+        
+            //現在ログインしているユーザーのタスク、未完了、優先度が設定されていないタスクを取得
+            $priority_undefinded_Tasks = Tasks::where('user_id',$user->id)
+                                        ->where('complete',0)
+                                        ->whereNull('priority')
+                                        ->where('category_id', $category_key)
+                                        ->get();
+            
+        } else {
+            //現在ログインしているユーザーのタスク、未完了、優先度が設定されている、優先度順位に照準ソート
+            $tasks = Tasks::where('user_id',$user->id)
+                    ->where('complete', 0)
+                    ->WhereNotNull('priority')
+                    ->orderBy('priority', 'asc')
+                    ->get();
+        
+            //現在ログインしているユーザーのタスク、未完了、優先度が設定されていないタスクを取得
+            $priority_undefinded_Tasks = Tasks::where('user_id',$user->id)
+                                        ->where('complete',0)
+                                        ->whereNull('priority')
+                                        ->get();
+        }
+        
+                            
+        
+        //別々に取得したデータを結合して$tasksに代入する
         $tasks = $tasks->concat($priority_undefinded_Tasks);
+        
+        $nowTime = Carbon::now();
+        $nowTime = $nowTime->format('Y-m-d');
+        
+        //結合済みの$tasksを返す場合
+        return view('tasks.mytasks', compact('tasks', 'nowTime', 'categories'));
+        // return view('tasks.mytasks', ['tasks' => $tasks, 'nowTime' => $nowTime]);
+        
         
         
         // $conditions = [
@@ -149,19 +191,13 @@ class TasksController extends Controller
         //     'complete' => 0
         // ];    
         
+        
         // $tasks = Tasks::where(function ($query) use ($conditions) {
         //     foreach ($conditions as $key => $value) {
         //         $query->where($key, $value);
         //     }
         // })
         // ->get();
-        
-        
-        $nowTime = Carbon::now();
-        $nowTime = $nowTime->format('Y-m-d');
-        
-        //結合済みの$tasksを返す場合
-        return view('tasks.mytasks', ['tasks' => $tasks, 'nowTime' => $nowTime]);
         
         //結合していない優先順位を持つtasks、持たないtasksを別々に持つ場合
         // return view('tasks.mytasks', ['tasks' => $tasks, 'nowTime' => $nowTime, 'priority_undefinded_Tasks' => $priority_undefinded_Tasks]);
@@ -196,6 +232,7 @@ class TasksController extends Controller
     //     return view('tasks.mytasks', ['tasks' => $tasks, 'nowTime' => $nowTime]);
         
     // }
+    
     
     
 }

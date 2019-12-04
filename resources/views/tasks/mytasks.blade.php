@@ -14,13 +14,35 @@
                     Add New Task
                 </a>
             </div>
+            
             <div class="col-md-2">
                 <a href="{{ action('Admin\TasksController@index') }}" role="button" class="btn btn-light">
                     Display All Tasks
                 </a>
             </div>
             
-            <div class="col-md-8">
+            <div class="col-md-2 offset-5">
+                <form action="{{ action('Admin\TasksController@display_mytasks') }}">
+                    <div class="form-group row">
+                        <div class="col-md-10">
+                        <select size=1 name="category_key" class="form-class custom-select">
+                            <option selected value="">select category</option>
+                            @foreach ($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                        </div>
+                    
+                        <div class="col-md-2">
+                            <input type="submit" class="btn btn-primary" value="category_key">
+                        </div>
+                    </div>
+                </form>
+                </div>
+            </div>
+            
+            <!--
+            <div class="col-md-4 col-md-offset-4">
                 <form action="{{ action('Admin\TasksController@index') }}" method="get">
                     <div class="form-group row">
                         <label class="col-md-2">Title</label>
@@ -37,8 +59,8 @@
                     </div>
                 </form>
             </div>
+            -->
 
-        </div>
         
         <div class="row">
             <div class="list-tasks col-md-12 mx-auto">

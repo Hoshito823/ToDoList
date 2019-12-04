@@ -15,7 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
+Route::group(['middleware' => 'auth'], function () {
     Route::get('todolist/create', 'Admin\TasksController@add');
     Route::post('todolist/create','Admin\TasksController@create');
     Route::get('todolist','Admin\TasksController@index');
@@ -26,6 +26,9 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('todolist/complete', 'Admin\TasksController@complete');
     Route::get('todolist/mytasks', 'Admin\TasksController@display_mytasks');
     Route::get('todolist/donemytasks', 'Admin\TasksController@display_done_mytasks');
+    //Categoryのルーティング
+    Route::get('categories/add','Admin\CategoriesController@add');
+    Route::post('categories/create','Admin\CategoriesController@create');
 });
 
 Auth::routes();
