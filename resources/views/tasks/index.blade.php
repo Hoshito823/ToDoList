@@ -47,7 +47,7 @@
                     <table class="table table-dark">
                         <thead>
                             <tr>
-                                <th width=10%>ID</th>
+                                <!--<th width=10%>ID</th>-->
                                 <th width=20%>Title</th>
                                 <th width=60%>Detail</th>
                                 <th width="10%">Deadline</th>
@@ -61,19 +61,24 @@
                              @else
                                  <tr>
                              @endif
-                                    <th>{{ $task->id }}</th>
+                                    <!--<th>{{ $task->id }}</th>-->
                                     <!--<th>{{ $loop->iteration }}</th>-->
                                     <td>{{ \Str::limit($task->title, 100) }}</td>
                                     <td>{{ \Str::limit($task->detail, 250) }}</td>
                                     <td>{{ $task->deadline }}</td>
                                     <td>
                                         <div>
-                                            <a href="{{ action('Admin\TasksController@edit', ['id' => $task->id]) }}" class="btn btn-primary">Edit</a>
+                                            <a href="{{ action('Admin\TasksController@complete', ['id' => $task->id]) }}" class="btn btn-primary">Complete</a>
                                         </div>
                                     </td>
                                     <td>
                                         <div>
-                                            <a href="{{ action('Admin\TasksController@delete', ['id' => $task->id]) }}" class="btn btn-primary">Delete</a>
+                                            <a href="{{ action('Admin\TasksController@edit', ['id' => $task->id]) }}" class="btn btn-light">Edit</a>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <a href="{{ action('Admin\TasksController@delete', ['id' => $task->id]) }}" class="btn btn-secondary">Delete</a>
                                         </div>
                                     </td>
                                 </tr>

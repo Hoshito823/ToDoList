@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 //ログイン情報を取得するための記述
 use Illuminate\Support\Facades\Auth;
 
-use App\Tasks;
+use App\Task;
 use App\Category;
 
 class CategoriesController extends Controller

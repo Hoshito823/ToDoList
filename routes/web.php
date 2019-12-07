@@ -26,9 +26,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('todolist/complete', 'Admin\TasksController@complete');
     Route::get('todolist/mytasks', 'Admin\TasksController@display_mytasks');
     Route::get('todolist/donemytasks', 'Admin\TasksController@display_done_mytasks');
+    
     //Categoryのルーティング
     Route::get('categories/add','Admin\CategoriesController@add');
     Route::post('categories/create','Admin\CategoriesController@create');
+    
+    //Tagのルーティング
+    Route::get('tags/add', 'Admin\TagsController@add');
+    Route::post('tags/create', 'Admin\TagsController@create');
 });
 
 Auth::routes();

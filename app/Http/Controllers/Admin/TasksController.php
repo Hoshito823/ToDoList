@@ -9,8 +9,10 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Http\Controllers\Controller;
 
-use App\Tasks;
+use App\Task;
 use App\Category;
+use App\TaskTag;
+use App\Tag;
 
 //日付操作ライブラリ使用
 use Carbon\Carbon;
@@ -20,20 +22,26 @@ class TasksController extends Controller
     //Return task add page
     public function add () {
         $categories = Category::get();
-        return view('tasks.create',['categories' => $categories]);
+        $tags = Tag::get();
+        return view('tasks.create', compact('categories', 'tags'));
     }
     
     
     //Create New Task
     public function create (Request $request) {
+        
         //Taskモデルの$rulesを使ってフォームから送信されてきたデータのバリデーションを行う
-        $this->validate($request, Tasks::$rules);
+        $this->validate($request, Task::$rules);
         
         //モデルからインスタンスを生成
-        $task = new Tasks;
+        $task = new Task;
+        
+        //ログインユーザー情報を取得
+        $user = Auth::user();
         
         //$requestのデータを全て取得
         $form = $request->all();
+        
         
         //画像の保存処理
         if (isset($form['image'])) {
@@ -43,32 +51,32 @@ class TasksController extends Controller
             $task->image_path = null;
         }
         
+        $task->user_id = $user->id;
+        
         unset($form['_token']);
         unset($form['image']);
         
-        //ログインユーザー情報を取得
-        $user = Auth::user();
-        $task->user_id = $user->id;
-        
         $task->fill($form);
         $task->save();
+        
+        $task->tags()->sync($tags);
         
         return redirect('todolist');
     } 
     
     
-    // Display Tasks
+    // Display Task
     public function index (Request $request) {
         
         //condition title （検索キー）という意味？
         $cond_title = $request->cond_title;
         
         if ($cond_title != '') {
-            //find cond_title from Tasks model and return all records which have cond_title in 'title' field.
-            $tasks = Tasks::where('title',$cond_title)->get();
+            //find cond_title from Task model and return all records which have cond_title in 'title' field.
+            $tasks = Task::where('title',$cond_title)->get();
         } else {
-            //get all records from Tasks model. you will pass this brunch when you access first.
-            $tasks = Tasks::all();
+            //get all records from Task model. you will pass this brunch when you access first.
+            $tasks = Task::all();
         }
         
         //get now time
@@ -81,18 +89,20 @@ class TasksController extends Controller
     
     //Edit exiting task
     public function edit (Request $request) {
-        $task = Tasks::find($request->id);
+        $task = Task::find($request->id);
         if (empty($task)) {
             abort(404);
         }
-        return view('tasks.edit',['task' => $task]);
+        $tags = Tag::get();
+        $categories = Category::get();
+        return view('tasks.edit', compact('task', 'tags', 'categories'));
     }
     
     //update task
     public function update(Request $request) {
         //validationをかける
-        $this->validate($request,Tasks::$rules);
-        $task = Tasks::find($request->id);
+        $this->validate($request,Task::$rules);
+        $task = Task::find($request->id);
         
         $task_form = $request->all();
         
@@ -118,13 +128,13 @@ class TasksController extends Controller
     }
     
     public function delete(Request $request){
-        $task = Tasks::find($request->id);
+        $task = Task::find($request->id);
         $task->delete();
         return redirect('todolist');
     }
     
     public function complete(Request $request){
-        $task = Tasks::find($request->id);
+        $task = Task::find($request->id);
         $task->complete = 1;
         $task->priority = Null;
         $task->save();
@@ -143,7 +153,7 @@ class TasksController extends Controller
         
         if ($category_key != '') {
             //現在ログインしているユーザーのタスク、未完了、優先度が設定されている、優先度順位に照準ソート
-            $tasks = Tasks::where('user_id',$user->id)
+            $tasks = Task::where('user_id',$user->id)
                     ->where('complete', 0)
                     ->WhereNotNull('priority')
                     ->where('category_id', $category_key)
@@ -151,7 +161,7 @@ class TasksController extends Controller
                     ->get();
         
             //現在ログインしているユーザーのタスク、未完了、優先度が設定されていないタスクを取得
-            $priority_undefinded_Tasks = Tasks::where('user_id',$user->id)
+            $priority_undefinded_Task = Task::where('user_id',$user->id)
                                         ->where('complete',0)
                                         ->whereNull('priority')
                                         ->where('category_id', $category_key)
@@ -159,14 +169,14 @@ class TasksController extends Controller
             
         } else {
             //現在ログインしているユーザーのタスク、未完了、優先度が設定されている、優先度順位に照準ソート
-            $tasks = Tasks::where('user_id',$user->id)
+            $tasks = Task::where('user_id',$user->id)
                     ->where('complete', 0)
                     ->WhereNotNull('priority')
                     ->orderBy('priority', 'asc')
                     ->get();
         
             //現在ログインしているユーザーのタスク、未完了、優先度が設定されていないタスクを取得
-            $priority_undefinded_Tasks = Tasks::where('user_id',$user->id)
+            $priority_undefinded_Task = Task::where('user_id',$user->id)
                                         ->where('complete',0)
                                         ->whereNull('priority')
                                         ->get();
@@ -175,7 +185,7 @@ class TasksController extends Controller
                             
         
         //別々に取得したデータを結合して$tasksに代入する
-        $tasks = $tasks->concat($priority_undefinded_Tasks);
+        $tasks = $tasks->concat($priority_undefinded_Task);
         
         $nowTime = Carbon::now();
         $nowTime = $nowTime->format('Y-m-d');
@@ -192,7 +202,7 @@ class TasksController extends Controller
         // ];    
         
         
-        // $tasks = Tasks::where(function ($query) use ($conditions) {
+        // $tasks = Task::where(function ($query) use ($conditions) {
         //     foreach ($conditions as $key => $value) {
         //         $query->where($key, $value);
         //     }
@@ -200,7 +210,7 @@ class TasksController extends Controller
         // ->get();
         
         //結合していない優先順位を持つtasks、持たないtasksを別々に持つ場合
-        // return view('tasks.mytasks', ['tasks' => $tasks, 'nowTime' => $nowTime, 'priority_undefinded_Tasks' => $priority_undefinded_Tasks]);
+        // return view('tasks.mytasks', ['tasks' => $tasks, 'nowTime' => $nowTime, 'priority_undefinded_Task' => $priority_undefinded_Task]);
     }
     
     
@@ -209,7 +219,7 @@ class TasksController extends Controller
         $user = Auth::user();
         
         //現在のユーザーIDに紐づいたTaskを返す。かつ完了済み（complete=１)のもの
-        $tasks = Tasks::where('user_id',$user->id)->where('complete', 1)->get();
+        $tasks = Task::where('user_id',$user->id)->where('complete', 1)->get();
         
         return view('tasks.donemytasks', ['donetasks' => $tasks]);
     }
@@ -217,7 +227,7 @@ class TasksController extends Controller
     
     // public function add_priority(Request $request){
     //     $user = Auth::user();
-    //     $task = Tasks::where('user_id', $user->id)->where('complete',0)->get();
+    //     $task = Task::where('user_id', $user->id)->where('complete',0)->get();
         
     //     //優先度設定
     //     $task->priority = $request->priority;
@@ -227,7 +237,7 @@ class TasksController extends Controller
     //     $nowTime = Carbon::now();
         
     //     //タスク内容全取得
-    //     $tasks = Tasks::where('user_id', $user->id)->where('complete', 0)->get();
+    //     $tasks = Task::where('user_id', $user->id)->where('complete', 0)->get();
         
     //     return view('tasks.mytasks', ['tasks' => $tasks, 'nowTime' => $nowTime]);
         

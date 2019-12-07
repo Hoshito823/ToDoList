@@ -20,21 +20,21 @@
                     <!--SetTasksFunction-->
                     <div class="form-group row">
                         <label class="col-md-2">Priority</label>
-                        <div class="col-md-10">
-                            <select size=1 name="priority">
+                        <span class="col-md-5">*Level(1：Highest ~ 5：Lowest)</span>
+                        <div class="col-md-2 offset-3">
+                            <select class="custom-select" size=1 name="priority">
                                 <option value="">-</option>
                                 @for ($i = 0; $i < 5; $i++)
                                 <option value="{{ $i + 1 }}">{{ $i + 1 }}</option>
                                 @endfor
                             </select>
-                            * Priority Level(1：Highest ~ 5：Lowest)
                         </div>
                     </div>
                     
                     <div class="form-group row">
                         <label class="col-md-2">Category</label>
                         <div class="col-md-10">
-                            <select size=1 name="category_id">
+                            <select class="custom-select" size=1 name="category_id">
                                 <option value="">-</option>
                                 @foreach ($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -68,6 +68,18 @@
                         <label class="col-md-2">Image</label>
                         <div class="col-md-10">
                             <input type="file" class="form-control-file" name="image">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group row">
+                        <label class="col-md-2">Tags</label>
+                        <div class="col-md-10">
+                        @foreach($tags as $tag)
+                            <div class="custom-control custom-checkbox col-md-10">
+                              <input type="checkbox" class="custom-control-input" id="{{ $tag->id }}" name="tags[]" value="{{ $tag->id }}">
+                              <label class="custom-control-label" for="{{ $tag->id }}">{{ $tag->name }}</label>
+                            </div>
+                        @endforeach
                         </div>
                     </div>
                     

@@ -4,10 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Tasks extends Model
+class Task extends Model
 {
     //自動採番なので他の値が入らないようにする
-    protected $guarded = array('id');
+    protected $guarded = ['id', 'tags'];
     
     //$rulesという名前で連想配列を作成する
     public static $rules = array(
@@ -17,11 +17,16 @@ class Tasks extends Model
     
     public function category()
     {
-      return $this->hasOne('App\Category');
+      return $this->belongsTo('App\Category');
+    }
+    
+    public function tags()
+    {
+      return $this->belongsToMany('App\Tag', 'task_tags');
     }
     
     public function getTasksByCategory(){
-      //
+      
     }
     
     

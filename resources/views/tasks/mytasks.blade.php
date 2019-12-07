@@ -34,7 +34,7 @@
                         </div>
                     
                         <div class="col-md-2">
-                            <input type="submit" class="btn btn-primary" value="category_key">
+                            <input type="submit" class="btn btn-primary" value="filter">
                         </div>
                     </div>
                 </form>
