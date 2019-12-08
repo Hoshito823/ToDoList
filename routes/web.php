@@ -40,3 +40,6 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+Route::get('/err', function () {
+    trigger_error("show error", E_USER_ERROR);
+});
