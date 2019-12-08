@@ -1,22 +1,15 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
-
 use Illuminate\Http\Request;
-
 //ログイン情報を取得するための記述
 use Illuminate\Support\Facades\Auth;
-
 use App\Http\Controllers\Controller;
-
 use App\Task;
 use App\Category;
 use App\TaskTag;
 use App\Tag;
-
 //日付操作ライブラリ使用
 use Carbon\Carbon;
-
 class TasksController extends Controller
 {
     //Return task add page
@@ -59,7 +52,7 @@ class TasksController extends Controller
         $task->fill($form);
         $task->save();
         
-        $task->tags()->sync($tags);
+        $task->tags()->sync($form['tags']);
         
         return redirect('todolist');
     } 
@@ -242,7 +235,4 @@ class TasksController extends Controller
     //     return view('tasks.mytasks', ['tasks' => $tasks, 'nowTime' => $nowTime]);
         
     // }
-    
-    
-    
 }
