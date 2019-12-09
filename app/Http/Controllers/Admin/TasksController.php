@@ -52,7 +52,10 @@ class TasksController extends Controller
         $task->fill($form);
         $task->save();
         
-        $task->tags()->sync($form['tags']);
+        //formから送られてくるtagsが存在しない時はpassする処理を記述
+        if (isset($form['tags'])) {
+            $task->tags()->sync($form['tags']); 
+        }
         
         return redirect('todolist');
     } 
